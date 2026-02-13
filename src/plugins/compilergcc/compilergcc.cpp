@@ -44,6 +44,7 @@
 #include <wx/uri.h>
 #include <wx/xml/xml.h>
 
+#include "terminal_accessor.h"
 #include "annoyingdialog.h"
 #include "debuggermanager.h"
 #include "filefilters.h"
@@ -1388,6 +1389,61 @@ int CompilerGCC::DoRunQueue()
     int flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER;
     if (cmd->isRun)
     {
+        // Check if we should use embedded terminal panel
+        ITerminalPanel* terminal = TerminalAccess::GetTerminalPanel();
+        
+        LogMessage(wxString::Format(_("DEBUG: Terminal pointer = %p"), terminal), cltInfo);
+        
+        if (terminal && !terminal->IsRunning())
+        {
+            LogMessage(_("DEBUG: Using embedded terminal"), cltInfo);
+            // Use embedded terminal
+            dir = m_CdRun;
+            
+            // setup dynamic linker path
+            wxString newLibPath = cbGetDynamicLinkerPathForTarget(m_pProject, cmd->target);
+            newLibPath = cbMergeLibPaths(oldLibPath, newLibPath);
+            
+            // Log message
+            LogMessage(wxString(_("Set variable: ")) + CB_LIBRARY_ENVVAR wxT("=") + newLibPath, cltInfo);
+            if (!cmd->message.IsEmpty())
+                LogMessage(cmd->message, cltNormal, ltMessages, false, false, true);
+            
+            // Extract actual program from terminal wrapper command
+            // The command looks like: "xterm -T title -e /path/to/program args"
+            // or "xfce4-terminal --disable-server -T title -x /path/to/program args"
+            wxString programCmd = cmd->command;
+            
+            // Find the -e or -x flag which precedes the actual command
+            int execFlagPos = programCmd.Find(_T(" -e "));
+            if (execFlagPos == wxNOT_FOUND)
+                execFlagPos = programCmd.Find(_T(" -x "));
+            
+            if (execFlagPos != wxNOT_FOUND)
+            {
+                // Extract everything after -e/-x flag
+                programCmd = programCmd.Mid(execFlagPos + 4).Trim(false);
+                LogMessage(wxString::Format(_("DEBUG: Extracted command: %s"), programCmd), cltInfo);
+            }
+            
+            // Set environment and run in terminal
+            wxArrayString envVars;
+            if (!newLibPath.IsEmpty())
+                envVars.Add(wxString(CB_LIBRARY_ENVVAR) + wxT("=") + newLibPath);
+            
+            bool success = terminal->RunProgram(programCmd, dir, envVars);
+            LogMessage(wxString::Format(_("DEBUG: RunProgram returned %d"), success), cltInfo);
+            
+            // Restore old library path
+            wxSetEnv(CB_LIBRARY_ENVVAR, oldLibPath);
+            
+            // Continue with next command
+            delete cmd;
+            return DoRunQueue();
+        }
+        
+        LogMessage(_("DEBUG: Falling back to external terminal"), cltInfo);
+        // Fall back to external terminal if embedded is unavailable or busy
         pipe = false; // no need to pipe output channels...
         flags |= wxEXEC_SHOW_CONSOLE;
         dir = m_CdRun;

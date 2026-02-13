@@ -56,6 +56,8 @@
 #include "startherepage.h"
 #include "switcherdlg.h"
 #include "templatemanager.h"
+#include "terminal_accessor.h"
+#include "terminalpanel.h"
 #include "toolsmanager.h"
 #include "uservarmanager.h"
 
@@ -729,6 +731,7 @@ MainFrame::MainFrame(wxWindow* parent)
        m_pPrjManUI(nullptr),
        m_pLogMan(nullptr),
        m_pInfoPane(nullptr),
+       m_pTerminalPanel(nullptr),
        m_pToolbar(nullptr),
        m_ToolsMenu(nullptr),
        m_HelpPluginsMenu(nullptr),
@@ -1087,6 +1090,11 @@ void MainFrame::SetupGUILogging(int uiSize16)
         }
 
         m_findReplace.CreateSearchLog();
+        
+        // Add embedded terminal panel
+        m_pTerminalPanel = new TerminalPanel(m_pInfoPane);
+        m_pInfoPane->AddNonLogger(m_pTerminalPanel, _("Terminal"));
+        TerminalAccess::SetTerminalPanel(m_pTerminalPanel);
     }
     else
     {

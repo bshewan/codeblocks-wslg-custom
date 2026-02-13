@@ -35,6 +35,7 @@ class cbAuiNotebook;
 class DebuggerMenuHandler;
 class DebuggerToolbarHandler;
 class InfoPane;
+class TerminalPanel;
 class wxGauge;
 class cbProjectManagerUI;
 
@@ -91,6 +92,7 @@ class MainFrame : public wxFrame
         bool IsLogPaneVisible();
 
         cbProjectManagerUI* GetProjectManagerUI() { return m_pPrjManUI; }
+        TerminalPanel* GetTerminalPanel() { return m_pTerminalPanel; }
     private:
         // event handlers
 
@@ -377,6 +379,7 @@ class MainFrame : public wxFrame
         cbProjectManagerUI* m_pPrjManUI;
         LogManager*         m_pLogMan;
         InfoPane*           m_pInfoPane;
+        TerminalPanel*      m_pTerminalPanel;
 
         wxToolBar* m_pToolbar; // main toolbar
         PluginToolbarsMap m_PluginsTools; // plugin -> toolbar map
