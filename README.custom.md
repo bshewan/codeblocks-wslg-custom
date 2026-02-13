@@ -60,6 +60,10 @@ cd /path/to/codeblocks_25.03
 The bootstrap script generates the configure script and other autotools files:
 
 ```bash
+# Make bootstrap script executable (if needed)
+chmod +x bootstrap update_revision.sh
+
+# Run bootstrap
 ./bootstrap
 ```
 
@@ -71,6 +75,8 @@ Running automake...
 Running autoconf...
 Bootstrap complete.
 ```
+
+**Note:** The `egrep is obsolete` warnings can be safely ignored - they don't affect the build.
 
 #### 3. Configure the Build
 
@@ -168,11 +174,16 @@ sudo apt-get install libwxgtk3.2-gtk3-dev  # Ubuntu/Debian
 sudo dnf install wxGTK-devel              # Fedora/RHEL
 ```
 
-**Problem: "aclocal: command not found"**
+**Problem: "aclocal: command not found" or "egrep is obsolete"**
 ```bash
 # Install autotools
 sudo apt-get install automake autoconf  # Ubuntu/Debian
 sudo dnf install automake autoconf      # Fedora/RHEL
+
+# Make scripts executable
+chmod +x bootstrap update_revision.sh
+
+# The "egrep is obsolete" warnings can be ignored - they don't affect the build
 ```
 
 **Problem: Build fails with "undefined reference"**
