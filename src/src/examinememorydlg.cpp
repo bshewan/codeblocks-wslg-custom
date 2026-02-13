@@ -97,7 +97,8 @@ wxString ExamineMemoryDlg::GetBaseAddress()
     wxString address = XRCCTRL(*this, "txtAddress", wxTextCtrl)->GetValue().Trim().Trim(false);
     
     // Check if "Center On" checkbox is checked
-    wxCheckBox *centerCheckbox = XRCCTRL(*this, "chkCenterOn", wxCheckBox);
+    // Use dynamic_cast to safely check the type
+    wxCheckBox *centerCheckbox = dynamic_cast<wxCheckBox*>(FindWindow(XRCID("chkCenterOn")));
     if (centerCheckbox && centerCheckbox->IsChecked())
     {
         // Only apply centering to hex addresses (not symbols or registers)
