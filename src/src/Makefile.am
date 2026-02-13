@@ -65,6 +65,7 @@ codeblocks_SOURCES = app.cpp \
 			splashscreen.cpp \
 			startherepage.cpp \
 			switcherdlg.cpp \
+			terminalpanel.cpp \
 			threadsdlg.cpp \
 			uservardlgs.cpp \
 			virtualbuildtargetsdlg.cpp \

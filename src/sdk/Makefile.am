@@ -117,6 +117,7 @@ libcodeblocks_la_SOURCES = annoyingdialog.cpp \
 						searchresultslog.cpp \
 						selecttargetdlg.cpp \
 						templatemanager.cpp \
+						terminal_accessor.cpp \
 						tinywxuni.cpp \
 						toolsmanager.cpp \
 						uservarmanager.cpp \
