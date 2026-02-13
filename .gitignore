@@ -1,0 +1,46 @@
+# Build artifacts
+*.o
+*.lo
+*.la
+*.a
+*.so
+*.so.*
+.libs/
+.deps/
+*.exe
+*.dll
+
+# Autotools
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.h
+config.h.in
+config.log
+config.status
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+stamp-h1
+compile
+config.guess
+config.sub
+m4/
+
+# IDE files
+*.cbp
+*.layout
+*.depend
+.vscode/
+.idea/
+
+# Build logs
+*.log
+
+# Precompiled headers
+*.gch
+*.pch
