@@ -1,6 +1,6 @@
-prefix=/usr/local
+prefix=/usr
 exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
+libdir=/usr/lib64
 includedir=${prefix}/include
 datarootdir = ${prefix}/share
 plugindir=${datarootdir}/codeblocks/plugins
@@ -8,7 +8,7 @@ sharedir=${datarootdir}
 
 Name: codeblocks
 Description: Code::Blocks IDE
-Version: 25.03svn13644
+Version: 25.03svn
 Libs: -L${libdir} -lcodeblocks
 Cflags: -I${includedir}/codeblocks \
 			-I${includedir}/codeblocks/tinyxml \

@@ -1,4 +1,4 @@
-%define _svnrev             13644
+%define _svnrev             
 %define req_wxgtk           2.8.0
 %define _redhat             %(if [ -f /etc/redhat-release ]; then echo 1; else echo 0; fi)
 %define _mandrake           %(if [ -f /etc/mandrake-release ]; then echo 1; else echo 0; fi)
@@ -61,7 +61,7 @@ Summary:                    OpenSource Cross Platform Free C++ IDE
 Group:                      Development/Tools
 License:                    GPLv3+
 URL:                        http://www.codeblocks.org/
-Source:                     %{name}-25.03svn13644.tar.bz2
+Source:                     %{name}-25.03svn.tar.bz2
 BuildRoot:                  %{_tmppath}/%{name}-%{version}-buildroot
 Requires:                   %{name}-libs%{?_isa} = %{version}
 Requires:                   xterm
@@ -222,7 +222,7 @@ wxSmith-plugins and to use the wxContribItems in own programs.
 
 %prep
 
-%setup -q -n codeblocks-25.03svn13644
+%setup -q -n codeblocks-25.03svn
 
 %{?suse_update_libdir:%{suse_update_libdir}}
 %{?suse_update_config:%{suse_update_config -f}}

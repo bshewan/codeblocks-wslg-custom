@@ -1,12 +1,12 @@
-prefix=/usr/local
+prefix=/usr
 exec_prefix=${prefix}
-libdir=${exec_prefix}/lib/codeblocks/wxContribItems
+libdir=/usr/lib64/codeblocks/wxContribItems
 includedir=${prefix}/include/codeblocks/wxContribItems
 datarootdir = ${prefix}/share
 sharedir=${datarootdir}
 
 Name: wxChartCtrl
 Description: wxChartCtrl also used for the wxSmith Contrib Items
-Version: 25.03svn13644
+Version: 25.03svn
 Libs: -L${libdir} -lwxchartctrl
 Cflags: -I${includedir}/wxchart/include

@@ -54,21 +54,6 @@ ExamineMemoryDlg::ExamineMemoryDlg(wxWindow* parent) :
     if (!combo->SetStringSelection(strBytes))
         combo->SetSelection(1); // Default is 32 bytes
 
-    // Set highlight word size based on configuration
-    // Default to 4 bytes which works well for most common types:
-    // - 32-bit integers (int, uint32_t)
-    // - 32-bit floats
-    // - Most variables in typical code
-    // Users can configure to 8 bytes for pointer-heavy debugging
-    m_HighlightWordSize = c->ReadInt(wxT("/common/examine_memory/highlight_word_size"), 4);
-    
-    // Validate word size (must be 1, 2, 4, or 8)
-    if (m_HighlightWordSize != 1 && m_HighlightWordSize != 2 && 
-        m_HighlightWordSize != 4 && m_HighlightWordSize != 8)
-    {
-        m_HighlightWordSize = 4;  // Fall back to 4 bytes
-    }
-
     for (int i = 0; i < 16; ++i)
         m_ChangedBytes[i] = false;
 
@@ -204,19 +189,9 @@ void ExamineMemoryDlg::AddHexByte(const wxString& addr, const wxString& hexbyte)
     m_PreviousValues[byteAddress] = (unsigned char)hb;
     
     // Mark this byte as changed if it differs from previous
-    // AND mark the entire word (of configured size) containing this byte
     if (hasChanged && m_HighlightChanges)
     {
-        // Calculate the word boundary based on m_HighlightWordSize
-        // For word size N: bytes are grouped as 0-(N-1), N-(2N-1), 2N-(3N-1), etc.
-        int wordStart = (bcmod / m_HighlightWordSize) * m_HighlightWordSize;
-        int wordEnd = wordStart + m_HighlightWordSize;
-        
-        // Mark all bytes in this word as changed
-        for (int i = wordStart; i < wordEnd && i < 16; ++i)
-        {
-            m_ChangedBytes[i] = true;
-        }
+        m_ChangedBytes[bcmod] = true;
     }
     
 //    m_pDbg->Log(wxString::Format(_T("hb=%d, [0]=%c, [1]=%c"), hb, hexbyte[0], hexbyte[1]));

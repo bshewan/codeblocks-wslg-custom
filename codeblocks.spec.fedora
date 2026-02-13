@@ -1,4 +1,4 @@
-%global svnrev             13644
+%global svnrev             
 
 Name:       codeblocks
 Version:	25.03
@@ -6,7 +6,7 @@ Release:	1%{?dist}
 Summary:	An open source, cross platform, free C++ IDE
 License:    GPLv3+
 URL:        http://www.codeblocks.org/
-Source0:	%{name}-25.03svn13644.tar.bz2
+Source0:	%{name}-25.03svn.tar.bz2
 
 BuildRequires:	libtool
 BuildRequires:	wxGTK-devel
@@ -89,7 +89,7 @@ Additional Code::Blocks plug-ins.
 
 
 %prep
-%setup -q -n %{name}-25.03svn13644
+%setup -q -n %{name}-25.03svn
 
 ./bootstrap
 
