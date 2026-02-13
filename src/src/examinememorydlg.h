@@ -34,6 +34,7 @@ class ExamineMemoryDlg : public wxPanel, public cbExamineMemoryDlg
         void EnableWindow(bool enable) override;
     protected:
         void OnGo(wxCommandEvent& event);
+        void OnCenterToggle(wxCommandEvent& event);
         void OnDebuggerContinued(CodeBlocksEvent& event);
 
     private:

@@ -22,6 +22,14 @@
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
+						<object class="wxCheckBox" name="chkCenterOn">
+							<label>Center on</label>
+							<tooltip>Center the address in the middle of the displayed bytes</tooltip>
+						</object>
+						<flag>wxLEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>4</border>
+					</object>
+					<object class="sizeritem">
 						<object class="wxStaticText" name="ID_STATICTEXT2">
 							<label>Bytes:</label>
 						</object>

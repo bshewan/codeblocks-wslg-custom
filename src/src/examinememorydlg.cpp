@@ -11,6 +11,7 @@
 
 #ifndef CB_PRECOMP
     #include <wx/button.h>
+    #include <wx/checkbox.h>
     #include <wx/combobox.h>
     #include <wx/intl.h>
     #include <wx/textctrl.h>
@@ -29,6 +30,7 @@ BEGIN_EVENT_TABLE(ExamineMemoryDlg, wxPanel)
     EVT_BUTTON(XRCID("btnGo"), ExamineMemoryDlg::OnGo)
     EVT_COMBOBOX(XRCID("cmbBytes"), ExamineMemoryDlg::OnGo)
     EVT_TEXT_ENTER(XRCID("txtAddress"), ExamineMemoryDlg::OnGo)
+    EVT_CHECKBOX(XRCID("chkCenterOn"), ExamineMemoryDlg::OnCenterToggle)
 END_EVENT_TABLE()
 
 ExamineMemoryDlg::ExamineMemoryDlg(wxWindow* parent) :
@@ -107,7 +109,36 @@ void ExamineMemoryDlg::Clear()
 
 wxString ExamineMemoryDlg::GetBaseAddress()
 {
-    return XRCCTRL(*this, "txtAddress", wxTextCtrl)->GetValue();
+    wxString address = XRCCTRL(*this, "txtAddress", wxTextCtrl)->GetValue().Trim().Trim(false);
+    
+    // Check if "Center On" checkbox is checked
+    wxCheckBox *centerCheckbox = XRCCTRL(*this, "chkCenterOn", wxCheckBox);
+    if (centerCheckbox && centerCheckbox->IsChecked())
+    {
+        // Only apply centering to hex addresses (not symbols or registers)
+        if (address.StartsWith(wxT("0x")) || address.StartsWith(wxT("0X")))
+        {
+            // Parse the hex address
+            wxULongLong_t baseAddr;
+            if (address.ToULongLong(&baseAddr, 16))
+            {
+                // Get the number of bytes to display
+                int bytes = GetBytes();
+                
+                // Calculate the centered start address (subtract half the bytes)
+                int64_t centeredAddr = baseAddr - (bytes / 2);
+                
+                // Ensure we don't go negative
+                if (centeredAddr < 0)
+                    centeredAddr = 0;
+                
+                // Return the centered address as hex string
+                return wxString::Format(wxT("0x%llx"), (unsigned long long)centeredAddr);
+            }
+        }
+    }
+    
+    return address;
 }
 
 int ExamineMemoryDlg::GetBytes()
@@ -289,6 +320,14 @@ void ExamineMemoryDlg::OnGo(cb_unused wxCommandEvent& event)
         m_FreezeAddress = false;
     }
 
+    if (plugin)
+        plugin->RequestUpdate(cbDebuggerPlugin::ExamineMemory);
+}
+
+void ExamineMemoryDlg::OnCenterToggle(cb_unused wxCommandEvent& event)
+{
+    // When the checkbox is toggled, refresh the memory view to apply/remove centering
+    cbDebuggerPlugin *plugin = Manager::Get()->GetDebuggerManager()->GetActiveDebugger();
     if (plugin)
         plugin->RequestUpdate(cbDebuggerPlugin::ExamineMemory);
 }
