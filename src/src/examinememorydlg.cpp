@@ -33,7 +33,8 @@ END_EVENT_TABLE()
 
 ExamineMemoryDlg::ExamineMemoryDlg(wxWindow* parent) :
     m_LastRowStartingAddress(0),
-    m_HighlightChanges(true)
+    m_HighlightChanges(true),
+    m_FreezeAddress(false)
 {
     //ctor
     if (!wxXmlResource::Get()->LoadPanel(this, parent, _T("MemoryDumpPanel")))
@@ -142,6 +143,16 @@ void ExamineMemoryDlg::AddHexByte(const wxString& addr, const wxString& hexbyte)
         // if it's zero (i.e this is the first row), keep "addr" as starting address for this row.
         // m_LastRowStartingAddress will be set again when we 've consumed this row...
         m_LastRowStartingAddress = cbDebuggerStringToAddress(addr);
+        
+        // If freeze address flag is set, replace the address textbox with the resolved hex address
+        // This "freezes" expressions like #$rsp to their evaluated value
+        if (m_FreezeAddress)
+        {
+            wxTextCtrl *addrCtrl = XRCCTRL(*this, "txtAddress", wxTextCtrl);
+            wxString hexAddr = wxString::Format(wxT("0x%llx"), (unsigned long long)m_LastRowStartingAddress);
+            addrCtrl->SetValue(hexAddr);
+            m_FreezeAddress = false;  // Only freeze once
+        }
     }
 
 #define HEX_OFFSET(a) (a*3)
@@ -254,6 +265,29 @@ void ExamineMemoryDlg::OnGo(cb_unused wxCommandEvent& event)
     // so it is the same next time the dialog is used.
     ConfigManager *c = Manager::Get()->GetConfigManager(wxT("debugger_common"));
     c->Write(wxT("/common/examine_memory/size_to_show"), GetBytes());
+
+    // Check if address starts with '#' - this means "freeze" the expression
+    // by evaluating it once and replacing with the actual hex address
+    wxTextCtrl *addrCtrl = XRCCTRL(*this, "txtAddress", wxTextCtrl);
+    wxString address = addrCtrl->GetValue().Trim().Trim(false);
+    
+    if (address.StartsWith(wxT("#")))
+    {
+        // Strip the '#' prefix for evaluation
+        address = address.Mid(1).Trim(false);
+        
+        // Temporarily set the address without '#' so debugger can evaluate it
+        addrCtrl->SetValue(address);
+        
+        // Mark that we need to freeze this address after evaluation
+        // We'll do this by storing the flag and handling it in AddHexByte
+        // where we can see the resolved address
+        m_FreezeAddress = true;
+    }
+    else
+    {
+        m_FreezeAddress = false;
+    }
 
     if (plugin)
         plugin->RequestUpdate(cbDebuggerPlugin::ExamineMemory);

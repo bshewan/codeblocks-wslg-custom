@@ -47,6 +47,7 @@ class ExamineMemoryDlg : public wxPanel, public cbExamineMemoryDlg
         bool m_HighlightChanges;
         bool m_ChangedBytes[16];  // Track which bytes in current line have changed
         int m_HighlightWordSize;  // Size in bytes for highlighting (1, 2, 4, or 8)
+        bool m_FreezeAddress;     // Flag to replace address with resolved hex value
         
         void ResetHighlighting();
     private:
